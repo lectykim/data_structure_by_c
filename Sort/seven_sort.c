@@ -26,11 +26,11 @@ void shell_insertion_sort(int* ptr, int first, int last, int gap);
 void merge_sort_execute(int* ptr, int size);
 void merge_sort(int* ptr, int left,int right);
 void merge(int* ptr, int left, int mid, int right);
-element delete_max_heap(HeapType* h);
-init(HeapType* h);
-void heap_sort(element e[], int n);
-void insert_max_heap(HeapType* h, element item);
-
+void heapify(int* ptr, int here, int size);
+void build_heap(int* ptr, int size);
+void heap_sort(int* ptr, int size);
+void quick_sort(int* ptr, int size);
+void quick_sort_execute(int* ptr, int L, int R);
 int main() {
 	int TIME = 0;
 
@@ -59,8 +59,10 @@ int main() {
 	//merge_sort_execute(arr_ptr, SIZE);
 
 	//힙 정렬
-	element e[MAX_SIZE] = { 9,7,6,5,8,3,1,2,1,3 };
-	heap_sort(e, SIZE);
+	//heap_sort(arr_ptr, SIZE);
+
+	//퀵 정렬
+	quick_sort(arr_ptr, SIZE);
 
 
 	/* Timer off */
@@ -363,82 +365,151 @@ Heap Sort
 1. 정렬해야 할 N개의 요소들로 최대 힙(완전 이진 트리)를 만든다.
 2. 그 다음으로 한 번에 요소를 힙에서 꺼내서 배열의 뒤부터 저장하면 된다.
 3. 삭제되는 요소들은 값이 감소되는 순서대로 정렬되게 되어 있다.
+
+heap 자료구조는 완전 이진 트리이므로 추가,삭제시 nlogn의 시간 복잡도를 갖는다.
+시간 복잡도:
+[최적]: nlogn
+[평균]: nlogn
+[최악]: nlogn
+
+※장점
+	1. 시간 복잡도가 우수하다
+	2. 힙정렬이 우수할 때는 전체자료의 정렬이 아니라, 가장 큰 값 몇개만을 정렬할 때 좋다.
+
+데이터 60000개 기준 : 4484ms.
 */
-void heap_sort(element e[], int n) {
-	int i;
-	HeapType h;
-
-	//힙을 초기화해주는 함수
-	init(&h);
-
-	//MAX HEAP에 하나씩 삽입
-	for (i = 0; i < n; i++) {
-		insert_max_heap(&h, e[i]);
+void heap_sort(int* ptr, int size) {
+	re_create_data(ptr, size);
+	
+	int tree_size;
+	build_heap(ptr, size);
+	//부모 노드를 골라서
+	for (tree_size = size - 1; tree_size >= 0; tree_size--) {
+		//두 개의 값을 바꾼 후
+		SWAP(*(ptr + 0), *(ptr + tree_size));
+		//트리 재구성
+		heapify(ptr, 0, tree_size);
 	}
 
-	//내림차순으로 정렬되어있는 힙 자료구조에서 제일 큰 값부터 차례대로 제거.
-	for (i = (n - 1); i >= 0; i--) {
-		e[i] = delete_max_heap(&h);
-		printf("%d ", e[i].key);
-	}
-}
-
-//힙 초기화
-init(HeapType* h) {
-	h->heap_size = 0;
+	after_print_data(ptr, size);
 }
 
 
 /*현재 요소의 개수가 heap_size인 힙 h에 item을 삽입.*/
 //최대 힙(max heap) 삽입 함수
-//마지막 값을 들고 있다가, 뒤에서부터 앞으로 한 칸씩 땡겨서 일치하는 곳에 삽입하는 전략 (생각보다 많이 쓰는 듯?)
-void insert_max_heap(HeapType* h, element item) {
-	int i;
-	i = ++(h->heap_size); // 힙 크기를 하나 증가
 
-	/* 트리를 거슬러 올라가면서 부모 노드와 비교하는 과정 */
-	//i가 루트 노드(index:1)이 아니고, 삽입할 item의 값이 부모 노드(index: i/2)보다 크면
-	//(i가 1이면 바로 힙에 삽입)
-	while ((i != 1) && (item.key > h->heap[i / 2].key)) {
-		//i번째 노드와 부모 노드를 교환한다.
-		h->heap[i] = h->heap[i / 2];
-		//한 레벨 위로 올라간다.
-		i /= 2;
+void build_heap(int* ptr,int size) {
+	int i, j;
+
+	// size/2-1부터 0까지 탐색=모든 '자식을 갖고 있는 부모 노드'의 탐색.
+	for (int i = size / 2 - 1; i >= 0; i--) {
+		heapify(ptr, i, size);
+
+		//정렬되는 과정을 보고 싶다면
+		//for (j = 0; j < size; j++) {
+		//	printf("%d ", *(ptr + j));
+		//}
+		//printf("\n \n");
 	}
 
-	h->heap[i] = item; //새 노드 삽입
 }
 
-element delete_max_heap(HeapType* h) {
-	int parent, child;
-	element item, temp;
-
-	item = h->heap[1]; //루트 값을 저장하기 위한 item에 할당
-	temp = h->heap[(h->heap_size)--]; // temp값은 마지막 노드에 할당하고 힙 크기를 줄임
-	parent = 1;
-	child = 2;
-
-	while (child <= h->heap_size) {
-		//현재 노드의 자식 노드 중 더 큰 자식 노드를 찾는다 (루트 노드의 왼쪽 노드인 index:2 부터 탐색 시작)
-		//만약 왼쪽 노드가 오른쪽 노드보다 작다면, 오른쪽 노드를 탐색하는 과정에 들어간다.
-		if ((child < h->heap_size) && (h->heap[child].key < h->heap[child + 1].key)) {
-			child++;
-		}
-
-		//만약 temp 노드가 child 노드보다 커지면, while문을 중지한다. 제대로 위치했다는 뜻이므로 while문을 탈출한다.
-		if (temp.key >= h->heap[child].key) 
-			break;
-
-		//child 노드가 temp 노드보다 크다면, 부모 노드와 child 노드를 교환
-		h->heap[parent] = h->heap[child];
-		parent = child;
-		child *= 2;
-		
+/*
+here value에 size/2-1부터 담아서,
+size / 2 x 2 +1,+2까지 담으면 마지막 요소까지 heapify 가능하다.
+*/
+void heapify(int* ptr, int here, int size) {
+	int left = here * 2 + 1;
+	int right = here * 2 + 2;
+	int max_value = here;
+	//왼쪽 값이 자신보다 크다면,
+	if (left<size && *(ptr + left)>*(ptr + max_value)) {
+		max_value = left;
 	}
 
-	//마지막 노드를 재구성한 위치에 삽입한다.
-	h->heap[parent] = temp;
+	//오른쪽 값이 자신보다 크다면,
+	if (right<size && size && *(ptr + right)>*(ptr + max_value)) {
+		max_value = right;
+	}
 
-	//최댓값(루트노드)를 반환한다.
-	return item;
+	//왼쪽이나, 오른쪽이 자신보다 크다면
+	if (max_value != here) {
+		SWAP(*(ptr + here), *(ptr + max_value));
+		heapify(ptr, max_value, size);
+	}
+}
+
+
+/*
+* 퀵 정렬
+* 
+* 평균적으로 매우 정렬이다 (!!)
+* 
+* 과정 설명
+* 1. 리스트 안의 한 요소를 선택한다. 이 요소를 피벗(pivot)이라고 한다.
+* 2. 피벗을 기준으로 피벗보다 작은 요소들은 모두 피벗의 왼쪽으로 옮겨지고,
+* 피벗보다 큰 요소들은 모두 피벗의 오른쪽으로 옮겨진다.
+* 3. 피벗을 제외한 왼쪽 리스트와 오른쪽 리스트를 다시 정렬한다.
+* [분할된 부분 리스트에 대하여 순환호출을 이용하여 정렬을 반복한다.]
+* 4. 부분 리스트들이 더이상 분할이 불가능할 때 까지 반복한다.
+* 
+* 퀵 정렬 알고리즘 과정 요약
+* 1. 피벗 값은 입력 리스트의 중간값으로 한다.
+* 2. 2개의 인덱스 변수(low, high)를 통해 리스트를 두 개의 부분 리스트로 나눈다.
+* 3. 탐색을 반복한다. 이 때, low는 피벗보다 큰 데이터를 만나면 멈추고, high는 피벗보다 작은 데이터를 만나면 멈춘다.
+* 4. 두 low와 hi가 가르키는 데이터를 교환한다.
+* 
+* [최적]: nlogn
+* [평균]: nlogn
+* [최악]: n^2
+* 
+* ※장점
+*	분할 정복이라 쉽게 구현 가능하다.
+*	큰 데이터를 다룰 때 효율적이다.
+*	오버헤드가 적다. 적은 메모리에서도 효율적으로 동작한다.
+* ※단점
+*	pivot을 고를 때 운이 안 좋으면 정렬이 느려질 수 있다.
+*	적은 데이터를 정렬할 때 좋은 방법은 아니다.
+*	안정 정렬이 아니다. 거의 정렬된 데이터셋에서 시간을 많이 사용할 수도 있다.
+* 
+*/
+void quick_sort(int* ptr, int size) {
+	re_create_data(ptr, size);
+
+	quick_sort_execute(ptr, 0, size-1);
+
+	after_print_data(ptr, size);
+}
+
+void quick_sort_execute(int* ptr, int L, int R) {
+	int left = L, right = R;
+	int middle = (L + R) / 2;
+	int pivot = *(ptr + middle);
+	
+	do {
+		//left의 값이 피벗보다 크면 멈춤
+		while (*(ptr + left) < pivot )
+			left++;
+		//right의 값이 피벗보다 작으면 멈춤
+		while (*(ptr + right) > pivot)
+			right--;
+
+		//left가 right보다 작다면
+		//left가 right보다 큰 경우에는, 이 구문을 거치지 않고 바로 종료
+		if (left <= right)
+		{
+			//두 값을 교환
+			SWAP(*(ptr + left), *(ptr + right));
+			left++;
+			right--;
+		}
+
+	} while (left <= right);
+
+	//반복부분
+	if (L < right)
+		quick_sort_execute(ptr, L, right);
+
+	if (left < R)
+		quick_sort_execute(ptr, left, R);
 }
