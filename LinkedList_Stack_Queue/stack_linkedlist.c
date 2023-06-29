@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-
+//test commit 2
 typedef struct list {
 	int data;
 	struct list* head;
