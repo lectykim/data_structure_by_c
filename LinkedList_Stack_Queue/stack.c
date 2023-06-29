@@ -1,55 +1,62 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#define STACK_ARRAY 1;
-#define STACK_LINKED_LIST 0;
+#define STACK_ARRAY 0
+#define STACK_LINKED_LIST 1
 
 /*
-	ìŠ¤íƒ :
-	ìƒˆë¡œìš´ ë°ì´í„°ë¥¼ ë„£ê³ , ê¸°ì¡´ì— ìžˆëŠ” ì œì¼ ë†’ì€ ê³³ì— ì¡´ìž¬í•˜ëŠ” ë°ì´í„°ë¥¼ ì‚­ì œí•  ìˆ˜ ìžˆëŠ”
-	ì„ í˜• ìžë£Œêµ¬ì¡°ì´ë‹¤.
+	½ºÅÃ :
+	»õ·Î¿î µ¥ÀÌÅÍ¸¦ ³Ö°í, ±âÁ¸¿¡ ÀÖ´Â Á¦ÀÏ ³ôÀº °÷¿¡ Á¸ÀçÇÏ´Â µ¥ÀÌÅÍ¸¦ »èÁ¦ÇÒ ¼ö ÀÖ´Â
+	¼±Çü ÀÚ·á±¸Á¶ÀÌ´Ù.
 
-	ìŠ¤íƒì„ êµ¬í˜„í•˜ê¸° ìœ„í•´ì„œëŠ” TOPì˜ í¬ì¸í„°ë¥¼ ê³„ì† ìœ ì§€í•´ì•¼ í•œë‹¤.
-	ì™œëƒí•˜ë©´ ìš°ë¦¬ëŠ” ì˜¤ë¡œì§€ ìŠ¤íƒì˜ ë§¨ ìœ„ì— ìžˆëŠ” ë°ì´í„°ë§Œ ì ‘ê·¼ì´ ê°€ëŠ¥í•˜ê¸° ë•Œë¬¸ì´ë‹¤.
+	½ºÅÃÀ» ±¸ÇöÇÏ±â À§ÇØ¼­´Â TOPÀÇ Æ÷ÀÎÅÍ¸¦ °è¼Ó À¯ÁöÇØ¾ß ÇÑ´Ù.
+	¿Ö³ÄÇÏ¸é ¿ì¸®´Â ¿À·ÎÁö ½ºÅÃÀÇ ¸Ç À§¿¡ ÀÖ´Â µ¥ÀÌÅÍ¸¸ Á¢±ÙÀÌ °¡´ÉÇÏ±â ¶§¹®ÀÌ´Ù.
 
-	LIFO (Last In First Out) ì˜ ì†ì„±ì„ ê°€ì§„ ìžë£Œêµ¬ì¡°ì´ë‹¤.
-	ì˜¤ë¡œì§€ ë§ˆì§€ë§‰ì— ë„£ì€ ìžë£Œê°€ ì œì¼ ë¨¼ì € ë‚˜ì˜¤ê²Œ ëœë‹¤.
+	LIFO (Last In First Out) ÀÇ ¼Ó¼ºÀ» °¡Áø ÀÚ·á±¸Á¶ÀÌ´Ù.
+	¿À·ÎÁö ¸¶Áö¸·¿¡ ³ÖÀº ÀÚ·á°¡ Á¦ÀÏ ¸ÕÀú ³ª¿À°Ô µÈ´Ù.
 
-	ê¸°ë³¸ì ìœ¼ë¡œ ë‹¤ì„¯ ê°œì˜ í•¨ìˆ˜ë¥¼ êµ¬í˜„í•œë‹¤.
+	±âº»ÀûÀ¸·Î ´Ù¼¸ °³ÀÇ ÇÔ¼ö¸¦ ±¸ÇöÇÑ´Ù.
 
-	push(), ìŠ¤íƒì— ê°’ì„ ë„£ëŠ” í•¨ìˆ˜ì´ë‹¤.
-	pop(), ìŠ¤íƒì— ìžˆëŠ” ê°’ì„ ë¹¼ë„¤ëŠ” í•¨ìˆ˜ì´ë‹¤.
-	top(), ìŠ¤íƒ ë§¨ ê¼­ëŒ€ê¸°ì— ìžˆëŠ” ê°’ì„ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜ì´ë‹¤.
-	isEmpty(), ë§Œì•½ ìŠ¤íƒì´ ë¹„ì–´ìžˆë‹¤ë©´ trueë¥¼ , ì•„ë‹ˆë©´ falseë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜ì´ë‹¤.
-	size(), ìŠ¤íƒì˜ í˜„ìž¬ í¬ê¸°ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜ì´ë‹¤.
-
-
-	ìŠ¤íƒì€ ì»´í“¨í„° ë‚´ë¶€ êµ¬ì¡°ì—ì„œ ë‹¤ì–‘í•˜ê²Œ ì‚¬ìš©ëœë‹¤.
-	ì¤‘ìœ„í‘œê¸°ì‹ì„ í›„ìœ„í‘œê¸°ì‹ìœ¼ë¡œ ë°”ê¾¸ëŠ” ìŠ¤íƒ,
-	í›„ìœ„í‘œê¸°ì‹ì„ ê³„ì‚°í•  ë•Œ ì‚¬ìš©ë˜ëŠ” ìŠ¤íƒ,
-	ìž¬ê·€í•¨ìˆ˜ì—ì„œì˜ í•¨ìˆ˜ì‹¤í–‰ì •ë³´ë¥¼ ë‹´ì•„ë‘ëŠ” ìŠ¤íƒ (ì–´ë–¤ ì£¼ì†Œë¡œ Jump í•´ì•¼í• ì§€ë¥¼ ë‹´ì•„ë‘ëŠ” ìŠ¤íƒ),
-	ë©”ëª¨ë¦¬ë¥¼ ê´€ë¦¬í•˜ëŠ” ìŠ¤íƒ (ì˜ˆë¥¼ ë“¤ì–´ cì–¸ì–´ì˜ ì„¸ê·¸ë©˜í…Œì´ì…˜ ìŠ¤íƒ),
-	undo-redo stackì´ ì¡´ìž¬í•œë‹¤. (ìš°ë¦¬ê°€ ë’¤ë¡œ ê°€ê¸°ë¥¼ í•  ë•Œ ë˜ëŠ” ctrl + zë¥¼ ëˆ„ë¥¼ ë•Œ
-	, ì •ë³´ë¥¼ ë‹´ì•„ë‘ëŠ” ìŠ¤íƒ)
-
-	ìŠ¤íƒì˜ êµ¬í˜„ ë°©ë²•ì€ arrayì™€ linked listê°€ ì¡´ìž¬í•œë‹¤.
-
-	arrayì˜ ìž¥ì : ë¹ ë¥´ë‹¤, êµ¬í˜„ì´ ì‰½ë‹¤.
-	arrayì˜ ë‹¨ì : ì²˜ìŒì— ì§€ì •í•œ í¬ê¸°ê°€ í•œì •ë˜ì–´ ìžˆìœ¼ë¯€ë¡œ 
-	í¬ê¸°ë¥¼ ì´ˆê³¼í•  ì •ë„ì˜ ê°’ì„ ë„£ì§€ ëª»í•œë‹¤. ë˜í•œ, ê³ ì •ëœ ë©”ëª¨ë¦¬ê°€ í• ë‹¹ë˜ì–´ ìžˆì–´ ê·¸ ë©”ëª¨ë¦¬ëŠ”
-	ë‚­ë¹„ë  ìˆ˜ ìžˆë‹¤.
-
-	linked listì˜ ìž¥ì  : ë™ì ìœ¼ë¡œ ì‚¬ì´ì¦ˆë¥¼ ëŠ˜ë¦´ ìˆ˜ ìžˆì–´, ë©”ëª¨ë¦¬ í• ë‹¹ì´ ìžìœ ë¡­ë‹¤.
-	linked listì˜ ë‹¨ì : êµ¬í˜„ì´ ì–´ë ¤ìš°ë©°, malloc() í•¨ìˆ˜ë¡œ ë°ì´í„°ë¥¼ ë™ì í• ë‹¹ í•  ìˆ˜ ìžˆëŠ”
-	í¬ê¸°ê°€ í•œì •ë˜ì–´ ìžˆë‹¤.
+	push(), ½ºÅÃ¿¡ °ªÀ» ³Ö´Â ÇÔ¼öÀÌ´Ù.
+	pop(), ½ºÅÃ¿¡ ÀÖ´Â °ªÀ» »©³×´Â ÇÔ¼öÀÌ´Ù.
+	top(), ½ºÅÃ ¸Ç ²À´ë±â¿¡ ÀÖ´Â °ªÀ» ¹ÝÈ¯ÇÏ´Â ÇÔ¼öÀÌ´Ù.
+	isEmpty(), ¸¸¾à ½ºÅÃÀÌ ºñ¾îÀÖ´Ù¸é true¸¦ , ¾Æ´Ï¸é false¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼öÀÌ´Ù.
+	size(), ½ºÅÃÀÇ ÇöÀç Å©±â¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼öÀÌ´Ù.
 
 
-	ë‘ ê°œë¥¼ ë‹¤ êµ¬í˜„í•´ë³´ê² ë‹¤.
+	½ºÅÃÀº ÄÄÇ»ÅÍ ³»ºÎ ±¸Á¶¿¡¼­ ´Ù¾çÇÏ°Ô »ç¿ëµÈ´Ù.
+	ÁßÀ§Ç¥±â½ÄÀ» ÈÄÀ§Ç¥±â½ÄÀ¸·Î ¹Ù²Ù´Â ½ºÅÃ,
+	ÈÄÀ§Ç¥±â½ÄÀ» °è»êÇÒ ¶§ »ç¿ëµÇ´Â ½ºÅÃ,
+	Àç±ÍÇÔ¼ö¿¡¼­ÀÇ ÇÔ¼ö½ÇÇàÁ¤º¸¸¦ ´ã¾ÆµÎ´Â ½ºÅÃ (¾î¶² ÁÖ¼Ò·Î Jump ÇØ¾ßÇÒÁö¸¦ ´ã¾ÆµÎ´Â ½ºÅÃ),
+	¸Þ¸ð¸®¸¦ °ü¸®ÇÏ´Â ½ºÅÃ (¿¹¸¦ µé¾î c¾ð¾îÀÇ ¼¼±×¸àÅ×ÀÌ¼Ç ½ºÅÃ),
+	undo-redo stackÀÌ Á¸ÀçÇÑ´Ù. (¿ì¸®°¡ µÚ·Î °¡±â¸¦ ÇÒ ¶§ ¶Ç´Â ctrl + z¸¦ ´©¸¦ ¶§
+	, Á¤º¸¸¦ ´ã¾ÆµÎ´Â ½ºÅÃ)
+
+	½ºÅÃÀÇ ±¸Çö ¹æ¹ýÀº array¿Í linked list°¡ Á¸ÀçÇÑ´Ù.
+
+	arrayÀÇ ÀåÁ¡: ºü¸£´Ù, ±¸ÇöÀÌ ½±´Ù.
+	arrayÀÇ ´ÜÁ¡: Ã³À½¿¡ ÁöÁ¤ÇÑ Å©±â°¡ ÇÑÁ¤µÇ¾î ÀÖÀ¸¹Ç·Î 
+	Å©±â¸¦ ÃÊ°úÇÒ Á¤µµÀÇ °ªÀ» ³ÖÁö ¸øÇÑ´Ù. ¶ÇÇÑ, °íÁ¤µÈ ¸Þ¸ð¸®°¡ ÇÒ´çµÇ¾î ÀÖ¾î ±× ¸Þ¸ð¸®´Â
+	³¶ºñµÉ ¼ö ÀÖ´Ù.
+
+	linked listÀÇ ÀåÁ¡ : µ¿ÀûÀ¸·Î »çÀÌÁî¸¦ ´Ã¸± ¼ö ÀÖ¾î, ¸Þ¸ð¸® ÇÒ´çÀÌ ÀÚÀ¯·Ó´Ù.
+	linked listÀÇ ´ÜÁ¡: ±¸ÇöÀÌ ¾î·Á¿ì¸ç, malloc() ÇÔ¼ö·Î µ¥ÀÌÅÍ¸¦ µ¿ÀûÇÒ´ç ÇÒ ¼ö ÀÖ´Â
+	Å©±â°¡ ÇÑÁ¤µÇ¾î ÀÖ´Ù.
+
+
+	µÎ °³¸¦ ´Ù ±¸ÇöÇØº¸°Ú´Ù.
+
+	stack_array´Â ÇöÀç ÆÄÀÏ¿¡, 
+	stack_linkedlist´Â ´Ù¸¥ ÆÄÀÏ¿¡ ÀúÀåÇØ µÎ¾ú´Ù.
 */
+
+
+
+
 
 #if STACK_ARRAY
 
-//ìŠ¤íƒì˜ êµ¬ì¡° [ìµœëŒ€ í¬ê¸°ë¥¼ ê°€ë¥´í‚¤ëŠ” topê³¼, ìŠ¤íƒì„ ë‹´ì•„ë‘ëŠ” ë°°ì—´.]
+½ºÅÃÀÇ ±¸Á¶ [ÃÖ´ë Å©±â¸¦ °¡¸£Å°´Â top°ú, ½ºÅÃÀ» ´ã¾ÆµÎ´Â ¹è¿­.]
 #define STACK_MAX_SIZE = 100;
 
 typedef struct Stack {
