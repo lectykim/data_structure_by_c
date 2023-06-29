@@ -1,15 +1,17 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#define DOUBLE_LINKED_LIST 1
+#define DOUBLE_LINKED_LIST 0;
 
-#if DOUBLE_LINKED_LIST
+
 /*
 	이중 연결 리스트 : 앞 노드를 가리키는 포인터가 추가되어, 양방향 탐색이 가능하다.
 
 */
 //노드 정의
-typedef struct {
+#if DOUBLE_LINKED_LIST
+
+typedef struct Node{
 	int data;
 	Node* prev_node;
 	Node* next_node;
@@ -99,9 +101,14 @@ void destroy_list(Node* current) {
 		remove = current;
 	}
 }
+
 int main() {
 	Node* head = NULL;
 	Node* new_node = NULL;
+
+	new_node = create_node(10);
+	append_node(&head, new_node);
+	print_list(head);
 }
 
 #endif

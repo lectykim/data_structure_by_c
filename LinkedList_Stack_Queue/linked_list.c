@@ -1,5 +1,5 @@
-#include<stdio.h>
-#include<stdlib.h>
+//#include<stdio.h>
+//#include<stdlib.h>
 
 #define SINGLE_LINKED_LIST 0
 
@@ -23,6 +23,8 @@
     배열처럼 물리적인 데이터를 바꾸지 않아도 되어서 더욱 효율적이다.
     
 */
+#if SINGLE_LINKED_LIST
+
 typedef struct Node {
     int data;
     struct Node* next_node;
@@ -106,7 +108,7 @@ void delete_list(Node** head) {
     }
     *head = NULL;
 }
-#if SINGLE_LINKED_LIST
+
 int main() {
     Node* list = NULL;
     Node* new_node = NULL;
