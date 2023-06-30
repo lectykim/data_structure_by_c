@@ -2,7 +2,7 @@
 #include<stdlib.h>
 
 #define STACK_ARRAY 0
-#define STACK_LINKED_LIST 1
+
 
 /*
 	╫╨ец :

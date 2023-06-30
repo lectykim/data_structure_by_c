@@ -1,3 +1,6 @@
+#define STACK_LINKED_LIST 0
+
+#if STACK_LINKED_LIST
 #include<stdio.h>
 #include<stdlib.h>
 
@@ -99,3 +102,5 @@ void print(stack* p) {
 		}
 	}
 }
+
+#endif
