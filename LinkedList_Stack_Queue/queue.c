@@ -1,4 +1,4 @@
-#define QUEUE 1
+#define QUEUE 0
 
 #if QUEUE
 #define MAX_SIZE 10
@@ -12,7 +12,7 @@
 	처음 들어온 요소가 가장 먼저 나가게 된다.
 
 	큐도 배열 구현이랑 링크드리스트 구현이 있다.
-	배열 구현은 
+	배열 구현은 다음과 같다.
 */
 
 typedef struct {
