@@ -1,7 +1,9 @@
-#define LINKED_LIST_QUEUE 1
+#define QUEUE_LN 0
 
+#if QUEUE_LN
 #include <stdio.h>
 #include <stdlib.h>
+
 
 typedef struct linkedlist {
 	int data;
@@ -95,3 +97,4 @@ void main() {
 	printf("%d", de_queue(q));
 	print(q);
 }
+#endif

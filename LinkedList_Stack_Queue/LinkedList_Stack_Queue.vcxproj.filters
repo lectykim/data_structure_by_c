@@ -33,5 +33,8 @@
     <ClCompile Include="queue_linkedlist.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="binary_tree.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
